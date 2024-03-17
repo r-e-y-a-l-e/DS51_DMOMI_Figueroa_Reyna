@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('places', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('description');
             $table->string('location');
             $table->string('contact');
+            $table->string('imagen');
             $table->integer('category_id');
             $table->timestamps();
         });

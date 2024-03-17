@@ -17,8 +17,8 @@ class UserController extends Controller
         foreach($users as $user){
             $object = [
                 "id" => $user->id,
-                "Name" => $user->name,
-                "Email" => $user->email
+                "name" => $user->name,
+                "email" => $user->email
             ];
             array_push($list ,$object);
         }
@@ -29,8 +29,8 @@ class UserController extends Controller
         $user= User::where('id', '=', $id)-> first();
             $object = [
                 "id" => $user->id,
-                "Name" => $user->name,
-                "Email" => $user->email
+                "name" => $user->name,
+                "email" => $user->email
             ];
             return response()->json($object);
         }
@@ -102,5 +102,4 @@ class UserController extends Controller
             return response()->json($response);
         }
     
-        
 }

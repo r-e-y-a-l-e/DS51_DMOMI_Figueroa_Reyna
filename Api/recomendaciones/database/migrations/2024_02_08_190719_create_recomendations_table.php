@@ -14,13 +14,12 @@ return new class extends Migration
         Schema::create('recomendations', function (Blueprint $table) {
             $table->id();
             $table->integer('place_id');
-            $table->integer('category_id');
             $table->integer('comment_id');
             $table->integer('rating_id');
+            $table->String('imagen');
             $table->timestamps();
 
             $table->foreign('place_id')->references('id')->on('places');
-            $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('comment_id')->references('id')->on('comments');
             $table->foreign('rating_id')->references('id')->on('ratings');
         });

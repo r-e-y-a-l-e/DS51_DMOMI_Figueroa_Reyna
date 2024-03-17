@@ -15,8 +15,8 @@ class CommentController extends Controller
         foreach($comments as $comment){
             $object = [
                 "id" => $comment -> id,
-                "user" => $comment -> user_id,
-                "Lugar" => $comment->place_id,
+                "user" => $comment -> user->name,
+                "Lugar" => $comment->place->name,
                 "Comment" => $comment -> comment
             ];
             array_push($list, $object);
@@ -24,27 +24,36 @@ class CommentController extends Controller
         return response()->json($list);
     }
 
-    public function getById($id){
-        $comment= Comment::where('id', '=', $id)-> first();
-            $object = [
-                "id" => $comment -> id,
-                "user" => $comment -> user_id,
-                "Lugar" => $comment->place_id,
-                "Comment" => $comment -> comment
-            ];
-            return response()->json($object);
-        }
+    public function getById($id) {
+    $comments = Comment::where('place_id', '=', $id)->get();
+
+    $response = [];
+    foreach ($comments as $comment) {
+        $object = [
+            "id" => $comment->id,
+            "user" => $comment->user->name,
+            "Lugar" => $comment->place->name,
+            "Comment" => $comment->comment,
+            "rating" => $comment->rating
+        ];
+        $response[] = $object;
+    }
+
+    return response()->json($response);
+}
     
         public function create(Request $request){
             $data = $request->validate([
                 'user_id'=>'required|numeric',
                 'place_id'=>'required|numeric',
-                'comment'=>'required|min:16|max:200'
+                'comment'=>'required|min:16|max:200',
+                'rating' => 'min:1'
             ]);
             $comment = Comment::create([
                 'user_id' => $data['user_id'],
                 'place_id' => $data['place_id'],
-                'comment'=>$data['comment']
+                'comment'=>$data['comment'],
+                'rating' =>$data['rating']
             ]);
             if($comment){
                 return response()->json([

@@ -12,7 +12,8 @@ class Recommendation extends Model
         'user_id',
         'place_id',
         'comment_id',
-        'rating_id'
+        'rating_id',
+        'imagen'
     ];
 
     public function user()

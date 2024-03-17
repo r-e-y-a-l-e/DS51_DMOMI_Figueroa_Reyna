@@ -9,32 +9,37 @@ use Illuminate\Http\Request;
 class RecommendationController extends Controller
 {
     public function list(){
-        $recommendations = Recommendation::all();
-        $list = [];
-        foreach ($recommendations as $recommendation) {
-            $object = [
-                "recommendation_id" => $recommendation->id,
-                "category_type" => $recommendation->place->category->type,
-                "place_name" => $recommendation->place->name,
-                "comment" => $recommendation->comment->comment,
-                "rating" => $recommendation->rating->rating,
-                "user_name" => $recommendation->user->name
-            ];
-            $list[] = $object;
-        }
-
-        return response()->json($list);
+            $recommendations = Recommendation::with([ 'comment', 'rating', 'user'])->get();
+            
+            $response = [];
+            
+            foreach ($recommendations as $recommendation) {
+                $object = [
+                    "id" => $recommendation->id,
+                    "user_id" => $recommendation->user->name,
+                    "place_id" => $recommendation->place->name,
+                    "category"  => $recommendation->place->category->type,
+                    "comment_id" => $recommendation->comment->comment,
+                    "rating_id" => $recommendation->rating->rating,
+                    "imagen" => $recommendation->imagen
+                ];
+                $response[] = $object;
+            }
+    
+            return response()->json($response);
     }
+    
 
     public function getById($id){
         $recommendation= Recommendation::where('id', '=', $id)-> first();
             $object = [
                 "id" => $recommendation->id,
-                "User" => $recommendation->user_id,
-                "Place" => $recommendation->place_id,
-                "Comment" => $recommendation->comment_id,
-                "Rating" => $recommendation->rating_id
-            ];
+                "user_id" => $recommendation->user->name,
+                "place_id" => $recommendation->place->name,
+                "comment_id" => $recommendation->comment->comment,
+                "rating_id" => $recommendation->rating->rating,
+                "imagen" => $recommendation->imagen
+        ];
             return response()->json($object);
         }
 

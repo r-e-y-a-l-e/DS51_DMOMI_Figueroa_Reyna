@@ -48,19 +48,8 @@ Route::post('/comments/create', [CommentController::class, 'create']);
 Route::post('/comments/update', [CommentController::class, 'update']);
 
 Route::get('/places', [PlaceController::class, 'list']);
-Route::get('/search/{category}', [PlaceController::class, 'searchByCategory'])->where('name', '[a-zA-Z]+');
+Route::get('/search/{category}', [PlaceController::class, 'searchByCategory'])->where('category', '[a-zA-Z]+');
+Route::get('/places/user/{id}', [PlaceController::class, 'getByUser']);
 Route::get('/places/{id}', [PlaceController::class, 'getById']);
 Route::post('/places/create', [PlaceController::class, 'create']);
 Route::post('/places/update', [PlaceController::class, 'update']);
-
-Route::get('/ratings', [RatingController::class, 'list']);
-Route::get('/ratings/{id}', [RatingController::class, 'getById']);
-Route::post('/ratings/create', [RatingController::class, 'create']);
-Route::post('/ratings/update', [RatingController::class, 'update']);
-
-Route::get('/recommendations/{name}', [RecommendationController::class, 'getUserRecommendations'])->where('name', '[a-zA-Z]+');
-Route::get('/recommendations/{user_id}', [RecommendationController::class, 'myrecommendations'])->where('id',  '\d+');
-Route::get('/recommendations', [RecommendationController::class, 'list']);
-Route::get('/recommendations/{id}', [RecommendationController::class, 'getById']);
-Route::post('/recommendations/create', [RecommendationController::class, 'create']);
-Route::post('/recommendations/update', [RecommendationController::class, 'update']);

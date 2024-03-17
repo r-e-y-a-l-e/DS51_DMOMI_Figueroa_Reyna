@@ -8,49 +8,93 @@ use Illuminate\Http\Request;
 
 class PlaceController extends Controller
 {
-    public function list()        {
-        $places = Place::all();
-        return response()->json($places);
-        $list = [];
-        foreach ($places as $place) {
-            if ($place->category) {
-                $object = [
-                    "id" => $place->id,
-                    "Nombre" => $place->name,
-                    "Ubicacion" => $place->location,
-                    "Contacto" => $place->contact,
-                    "Categoria" => $place->category->type
-                ];
-                $list[] = $object;
-            }
-        }
 
-        return response()->json($list);
-    }
+    public function list(){
+    $places = Place::all();
+    
+    $response = [];
+    
+    foreach ($places as $place) {
+        $average_rating = $place->comments()->avg('rating');
 
-    public function getById($id){
-        $place= Place::where('id', '=', $id)-> first();
         $object = [
             "id" => $place->id,
-            "Nombre" => $place->name,
-            "Ubicacion" => $place->location,
-            "Contacto" => $place->contact,
-            "Categoria" => $place->category->type
+            "user_id"=>$place->user_id,
+            "name" => $place->name,
+            "description"=> $place->description,
+            "location" => $place->location,
+            "contact" => $place->contact,
+            "imagen" => $place->imagen,
+            "category" => $place->category->type,
+            "rating" => round($average_rating, 1)
         ];
-            return response()->json($object);
+        $response[] = $object;
+    }
+
+    return response()->json($response);
+}
+
+public function getByUser($id){
+        $places= Place::where('user_id', '=', $id)-> get();
+        $response = [];
+        foreach ($places as $place) {
+        $average_rating = $place->comments()->avg('rating');
+
+        $object = [
+            "id" => $place->id,
+            "user_id"=>$place->user_id,
+            "name" => $place->name,
+            "description"=> $place->description,
+            "location" => $place->location,
+            "contact" => $place->contact,
+            "imagen" => $place->imagen,
+            "category" => $place->category->type,
+            "rating" => round($average_rating, 1)
+        ];
+        $response[]= $object;
+    }
+            return response()->json($response);
+        }
+
+    public function getById($id){
+        $places= Place::where('id', '=', $id)-> get();
+        $response = [];
+        foreach ($places as $place) {
+        $average_rating = $place->comments()->avg('rating');
+
+        $object = [
+            "id" => $place->id,
+            "user_id"=>$place->user_id,
+            "name" => $place->name,
+            "description"=> $place->description,
+            "location" => $place->location,
+            "contact" => $place->contact,
+            "imagen" => $place->imagen,
+            "category" => $place->category->type,
+            "rating" => round($average_rating, 1)
+        ];
+        $response[]= $object;
+    }
+            return response()->json($response);
         }
 
         public function create(Request $request){
             $data = $request->validate([
+                'user_id'=>'required|numeric',
                 'name'=>'required|min:5',
+                'description'=>'required|min:10',
                 'location'=>'required|min:10',
-                'contact'=>'required|min:10',
+                'contact'=>'min:10',
+                'imagen' => 'required|min:10',
                 'category_id'=>'required|numeric'
             ]);
             $place = Place::create([
+                'user_id'=>$data['user_id'],
                 'name'=>$data['name'],
+                'description'=>$data['description'],
                 'location'=>$data['location'],
                 'contact'=>$data['contact'],
+                'imagen'=>$data['imagen'],
                 'category_id'=>$data['category_id']
             ]);
             if($place){
@@ -68,8 +112,10 @@ class PlaceController extends Controller
         public function update(Request $request){
             $data = $request->validate([
                 'name'=>'required|min:5',
+                'description' => 'required|min:10',
                 'location'=>'required|min:10',
                 'contact'=>'required|min:10',
+                'imagen' => 'required|min:10',
                 'category_id'=>'required|numeric'
             ]);
         
@@ -79,8 +125,10 @@ class PlaceController extends Controller
                 $old_data = $place->replicate();
         
                 $place->type = $data['name'];
+                $place->type = $data['description'];
                 $place->type = $data['location'];
                 $place->type = $data['contact'];
+                $place->type = $data['imagen'];
                 $place->type = $data['categry_id'];
                 if($place->save()){
                     $object = [
@@ -98,28 +146,35 @@ class PlaceController extends Controller
             }
         }
 
-        public function searchByCategory($category)
-        {
-            $places = Place::whereHas('category', function ($query) use ($category) {
-                    $query->where('type', 'like', "%$category%");
-                })
-                ->get();
+        public function searchByCategory($searchTerm)
+{
+    $places = Place::where(function ($query) use ($searchTerm) {
+        $query->where('name', 'like', "%$searchTerm%")
+              ->orWhereHas('category', function ($query) use ($searchTerm) {
+                  $query->where('type', 'like', "%$searchTerm%");
+              });
+    })->get();
 
-            $response = [];
-            foreach ($places as $place) {
-                if ($place->category) {
-                    $object = [
-                        "id" => $place->id,
-                        "Nombre" => $place->name,
-                        "Ubicacion" => $place->location,
-                        "Contacto" => $place->contact,
-                        "Categoria" => $place->category->type
-                    ];
-                    $response[] = $object;
-                }
-            }
-
-            return response()->json($response);
+    $response = [];
+    foreach ($places as $place) {
+        $average_rating = $place->comments()->avg('rating');
+        if ($place->category) {
+            $object = [
+                "id" => $place->id,
+                "name" => $place->name,
+                "description" => $place->description,
+                "location" => $place->location,
+                "contact" => $place->contact,
+                'imagen' =>$place->imagen,
+                "category" => $place->category->type,
+                "rating" => round($average_rating, 1)
+            ];
+            $response[] = $object;
         }
+    }
+
+    return response()->json($response);
+}
+
 
 }

@@ -22,9 +22,9 @@ class User extends Authenticatable
         'email',
         'password'
     ];
-    public function recommendations()
+    public function places()
     {
-        return $this->hasMany(Recommendation::class, 'user_id');
+        return $this->hasMany(Place::class, 'user_id');
     }
 
     /**
