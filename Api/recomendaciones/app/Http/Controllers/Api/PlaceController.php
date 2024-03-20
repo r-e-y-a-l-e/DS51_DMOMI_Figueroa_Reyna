@@ -161,6 +161,7 @@ public function getByUser($id){
         if ($place->category) {
             $object = [
                 "id" => $place->id,
+                "user_id"=>$place->user_id,
                 "name" => $place->name,
                 "description" => $place->description,
                 "location" => $place->location,

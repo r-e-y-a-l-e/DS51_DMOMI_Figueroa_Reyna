@@ -38,11 +38,13 @@ class UserController extends Controller
         public function create(Request $request){
             $data = $request->validate([
                 'name'=>'required|min:3',
-                'email'=>'required'
+                'email'=>'required',
+                'password'=>'required'
             ]);
             $user = User::create([
                 'name'=>$data['name'],
-                'email'=>$data['email']
+                'email'=>$data['email'],
+                'password'=>$data['password']
             ]);
             if($user){
                 return response()->json([
