@@ -111,6 +111,7 @@ public function getByUser($id){
 
         public function update(Request $request){
             $data = $request->validate([
+                'id'=>'required|numeric',
                 'name'=>'required|min:5',
                 'description' => 'required|min:10',
                 'location'=>'required|min:10',
@@ -124,12 +125,12 @@ public function getByUser($id){
             if($place){
                 $old_data = $place->replicate();
         
-                $place->type = $data['name'];
-                $place->type = $data['description'];
-                $place->type = $data['location'];
-                $place->type = $data['contact'];
-                $place->type = $data['imagen'];
-                $place->type = $data['categry_id'];
+                $place->name = $data['name'];
+                $place->description = $data['description'];
+                $place->location = $data['location'];
+                $place->contact = $data['contact'];
+                $place->imagen = $data['imagen'];
+                $place->category_id = $data['category_id'];
                 if($place->save()){
                     $object = [
                         "response" => 'Success. Item Update',

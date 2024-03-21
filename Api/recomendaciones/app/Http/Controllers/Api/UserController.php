@@ -63,7 +63,7 @@ class UserController extends Controller
                 'id' => 'required|integer|min:1',
                 'name'=>'required|min:3',
                 'email'=>'required',
-                'password'=>'required|min:8'
+                'password'=>'required|min:6'
             ]);
         
             $user = User::where('id', '=', $data['id'])->first();
@@ -71,9 +71,9 @@ class UserController extends Controller
             if($user){
                 $old_data = $user->replicate();
         
-                $user->type = $data['name'];
-                $user->type = $data['email'];
-                $user->type = $data['password'];
+                $user->name = $data['name'];
+                $user->email = $data['email'];
+                $user->password = $data['password'];
                 if($user->save()){
                     $object = [
                         "response" => 'Success. Item Update',

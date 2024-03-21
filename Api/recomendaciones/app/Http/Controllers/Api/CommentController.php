@@ -79,9 +79,9 @@ class CommentController extends Controller
             if($comment){
                 $old_data = $comment->replicate();
         
-                $comment->type = $data['user_id'];
-                $comment->type = $data['place_id'];
-                $comment->type = $data['comment'];
+                $comment->user_id = $data['user_id'];
+                $comment->place_id = $data['place_id'];
+                $comment->comment = $data['comment'];
                 if($comment->save()){
                     $object = [
                         "response" => 'Success. Item Update',
